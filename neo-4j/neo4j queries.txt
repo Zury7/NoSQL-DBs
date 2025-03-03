@@ -1,0 +1,208 @@
+neo4j desktop 
+https://neo4j.com/download/
+key 
+local dbms and create 
+https://github.com/harblaith7/Neo4j-C...
+
+###############
+#Querying data#
+############### 
+match (node) 
+return node
+match (player: PLAYER) 
+return player
+match (coach: COACH) 
+return coach 
+match (n: TEAM) 
+return n
+match (player: PLAYER) 
+return player.name
+match (player: PLAYER) 
+return player.name, player.height 
+match (player: PLAYER) 
+return player.name as name, player.height as height
+match (player: PLAYER) 
+where player.name = "LeBron James" 
+return player
+match (player: PLAYER) {name : "LeBron James", height : 28.1} 
+return player
+match (player: PLAYER) 
+where player.name <> "LeBron James" 
+return player
+match (player: PLAYER) 
+where player.height >= 2 
+return player
+match (player: PLAYER) 
+where ( player.weight / (player.height*player.height)) > 25 
+return player
+match (player: PLAYER) 
+where player.weight >= 100 and player.height <= 2 
+return player
+match (player: PLAYER) 
+where player.weight >= 100 or player.height <= 2 
+return player
+match (player: PLAYER) 
+where not player.weight >= 100 or player.height <= 2 
+return player
+match (player: PLAYER) 
+where player.height >= 2 
+return player limit 5
+match (player: PLAYER) 
+where player.height >= 2 
+return player 
+skip 2 
+limit 5
+match (player: PLAYER) 
+where player.height >= 2 
+return player 
+order by player.height desc
+match (player: PLAYER) , (coach: COACH), (team: TEAM) 
+where player.height >= 2 and coach.height <= 2 
+return player, coach, team
+
+########################
+#Querying relationships#
+######################## 
+match (player: PLAYER) -[relationship:PLAYS_FOR]-> (team: TEAM) 
+where team.name = "LA Lakers"
+return player
+match (player: PLAYER) -[relationship:PLAYS_FOR]-> (team: TEAM) 
+where team.name = "LA Lakers"
+return player
+match (player: PLAYER) -[relationship:PLAYS_FOR]-> (team: TEAM) 
+where team.name = "LA Lakers" or team.name = "Dallas Mavericks"
+return player, team
+match (player: PLAYER) -[contract:PLAYS_FOR]-> (team: TEAM) 
+where contract.salary >= 35000000
+return player, team
+match (lebron: PLAYER {name: "LeBron James"}) -[:TEAMMATES]-> (teammate:PLAYER) 
+match (teammate) -[contract:PLAYS_FOR]-> (team:TEAM)
+where contract.salary >= 40000000
+return player, teammate
+
+###################
+#Aggregrating data#
+###################
+match (player: PLAYER) -[gamePlayed:PLAYED_AGAINST]-> (:TEAM)
+return player.name, count (gamePlayed)
+match (player: PLAYER) -[gamePlayed:PLAYED_AGAINST]-> (:TEAM)
+return player.name, avg (gamePlayed.points) as ppg
+match (player: PLAYER) -[gamePlayed:PLAYED_AGAINST]-> (:TEAM)
+return player.name, avg (gamePlayed.points) as ppg
+order by ppg desc
+limit 1
+****sum, max, min could be used too
+
+##############
+#Delete nodes#
+##############
+match (ja {name: "Ja Morant"})
+delete ja
+match (ja {name: "Ja Morant"})
+detach delete ja
+match (n) 
+return n
+match (joel{name: "Joel Embiid"}) -[rel:PLAYS_FOR]-> 
+delete rel
+match (n) 
+detach delete n
+match (n) return n
+
+#############
+#Create data#
+#############
+#create node
+create (lebron:PLAYER:COACH:GENERAL_MANAGER {name: "LeBron James", height: 2.01})
+return lebron
+#create node and relationship
+create (lebron:PLAYER -[:PLAYS_FOR {salary: 34000000}]-> (:TEAM {name: "LA Lakers"})
+return lebron
+match (n) return n
+match (lebron:PLAYER {name: "LeBron James"}), (lakers:TEAM {name: "LA Lakers"})
+create (lebron) -[:PLAYS_FOR {salary: 40000000}]-> (lakers)
+match (n) return n
+
+#############
+#Update data#
+#############
+
+#for data 
+#only for querying using id 
+match (anthony: PLAYER)
+where ID(Anthony) = 0
+return anthony
+match (anthony: PLAYER)
+where ID(anthony) = 0
+set anthony.name = "Anthony Davis"
+return anthony
+match (lebron: PLAYER)
+where ID(lebron) = 0
+set lebron.height = 2.02, lebron.age = 36
+return anthony
+match (lebron: PLAYER)
+where ID(lebron) = 0
+set lebron:REF
+return Anthony
+
+#for relationships
+match (lebron{name: "LeBron James"} -[contract: PLAYS_FOR]-> (:TEAM)
+set contract.salary = 60000000
+return lebron, team
+
+#remove labels 
+match (lebron{name: "LeBron James"} 
+remove lebron.age
+return lebron
+match (lebron{name: "LeBron James"} 
+remove lebron:REF
+return lebron
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
